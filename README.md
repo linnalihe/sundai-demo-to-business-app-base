@@ -59,8 +59,8 @@ You'll fill in each value in the steps below. The file looks like this:
 ```bash
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=   # sb_publishable_... (replaces ANON_KEY)
+SUPABASE_SECRET_KEY=                    # sb_secret_... (replaces SERVICE_ROLE_KEY, server-only)
 
 # Stripe
 STRIPE_SECRET_KEY=
@@ -91,13 +91,22 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 ### 3.2 Get your API keys
 
-In your Supabase project, go to **Project Settings → API**:
+In your Supabase project, go to **Settings → API Keys**.
 
-- Copy **Project URL** → paste as `NEXT_PUBLIC_SUPABASE_URL`
-- Copy **anon / public** key → paste as `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- Copy **service_role** key → paste as `SUPABASE_SERVICE_ROLE_KEY`
+Supabase now has two key formats. Use the **new format** if your project shows them (keys starting with `sb_`), otherwise use the legacy format — both work:
 
-> The service role key bypasses Row Level Security. Never expose it to the browser.
+| What you need | New format (preferred) | Legacy format |
+|---|---|---|
+| Public/client key | **Publishable key** (`sb_publishable_...`) | **anon** key (JWT) |
+| Server-only key | **Secret key** (`sb_secret_...`) | **service_role** key (JWT) |
+
+- Copy your **Project URL** → paste as `NEXT_PUBLIC_SUPABASE_URL`
+- Copy your **publishable key** (or legacy **anon** key) → paste as `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- Copy your **secret key** (or legacy **service_role** key) → paste as `SUPABASE_SECRET_KEY`
+
+> `SUPABASE_SECRET_KEY` bypasses Row Level Security. Never expose it to the browser or commit it to source control.
+
+> **Note:** The legacy `anon` and `service_role` JWT keys still work but will be deprecated by end of 2026. New projects should use the `sb_publishable_` / `sb_secret_` format.
 
 ### 3.3 Run the database migration
 
