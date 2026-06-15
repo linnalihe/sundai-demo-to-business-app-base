@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { posthogServer } from "@/lib/posthog";
 import { env } from "@/env";
 
@@ -21,7 +21,7 @@ export async function POST(_request: NextRequest) {
   let stripeCustomerId = sub?.stripe_customer_id;
 
   if (!stripeCustomerId) {
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       email: user.email,
       metadata: { supabase_user_id: user.id },
     });
@@ -33,7 +33,7 @@ export async function POST(_request: NextRequest) {
       .eq("user_id", user.id);
   }
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: stripeCustomerId,
     mode: "subscription",
     line_items: [{ price: env.STRIPE_PRICE_ID_PRO_MONTHLY, quantity: 1 }],
